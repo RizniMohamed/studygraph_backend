@@ -9,10 +9,15 @@ const { convertToJSDate, dateFormat } = require("../../helper/dt");
 const getLineChart = async (req, res) => {
   let { start_date, end_date } = req.body
 
+  const { userID } = req.query;
+
+  const query_params = {}
+  if (userID) query_params["userID"] = userID;
+
   if (!start_date) throw new APIError("start_date required", StatusCodes.NOT_FOUND)
   if (!end_date) throw new APIError("end_date required", StatusCodes.NOT_FOUND)
 
-  const { ts, allDates, allTags } = await getAllTS(start_date, end_date)
+  const { ts, allDates, allTags } = await getAllTS({start_date, end_date,query_params})
 
   const allDates_ordered = allDates.map(d => new Date(convertToJSDate(d))).sort((a, b) => a - b).map(d => dateFormat(d))
   let unique_TagList = [...new Set(allTags.map(JSON.stringify))].map(JSON.parse);

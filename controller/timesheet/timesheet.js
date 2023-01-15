@@ -42,23 +42,12 @@ const createTimesheet = async (req, res) => {
 
 //Get tags
 const getTimesheet = async (req, res) => {
-  const { timesheetID } = req.params;
 
   const { tsID : _id, userID } = req.query;
 
   const query_params = {}
   if (_id) query_params["_id"] = _id
   if (userID) query_params["userID"] = userID;
-
-
-  // if (timesheetID) {
-  //   const timesheet = await timesheetModel.find({ _id: timesheetID })
-  //   const tag = await tagModel.findById({ _id: timesheet[0].tagID })
-  //   res.status(StatusCodes.OK).json({
-  //     status: StatusCodes.OK,
-  //     data: { ts: timesheet[0], tag: tag }
-  //   });
-  // }
 
   const { ts, allDates, allTags } = await getAllTS({query_params})
 
