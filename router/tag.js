@@ -3,13 +3,21 @@ const { createTag, getTag, updateTag, deleteTag } = require("../controller/tag/t
 
 router
   .route("/")
-  .get(getTag)
   .post(createTag)
+  .get(getTag)
+
+// router
+//   .route("/g/:userID")
+//   .get(getTag);
+
+  
+// router
+//   .route("/g/:userID/:tagID")
+//   .get(getTag);
 
 router
   .route("/:tagID")
-  .get(getTag)
   .patch(updateTag)
-  .delete(deleteTag)
+  .delete(deleteTag);
 
 module.exports = router;

@@ -7,36 +7,41 @@ const { APIError } = require("../../middleware/errorHandler");
 const createTag = async (req, res) => {
   const { name, color, userID } = req.body;
 
-  if (!userID) throw new APIError("userID required", StatusCodes.NOT_FOUND)
-  const user = await userModel.findById({ _id: userID })
-  if (!user) throw new APIError("user not found", StatusCodes.NOT_FOUND)
-  if (!color) throw new APIError("color not found", StatusCodes.NOT_FOUND)
+  if (!userID) throw new APIError("userID required", StatusCodes.NOT_FOUND);
+  const user = await userModel.findById({ _id: userID });
+  if (!user) throw new APIError("user not found", StatusCodes.NOT_FOUND);
+  if (!color) throw new APIError("color not found", StatusCodes.NOT_FOUND);
 
-  const newTag = await tagModel.create({
-    name: name,
-    color: color,
-    userID: userID
-  }).catch(err => {
-    if (err.code === 11000)
-      throw new APIError(`Duplication error:  ${JSON.stringify(err.keyValue)}`, err.code)
-    throw new APIError(err.message, err.code)
-  })
+  const newTag = await tagModel
+    .create({
+      name: name,
+      color: color,
+      userID: userID,
+    })
+    .catch((err) => {
+      if (err.code === 11000)
+        throw new APIError(
+          `Duplication error:  ${JSON.stringify(err.keyValue)}`,
+          err.code
+        );
+      throw new APIError(err.message, err.code);
+    });
 
   return res.status(StatusCodes.OK).json({
     status: StatusCodes.CREATED,
     data: newTag,
   });
-
 };
 
 //Get tags
 const getTag = async (req, res) => {
+  const { tagID : _id, userID } = req.query;
 
-  const { tagID } = req.params;
-  if (tagID)
-    tag = await tagModel.find({ _id: tagID })
-  else
-    tag = await tagModel.find()
+  const query_params = {}
+  if (_id) query_params["_id"] = _id
+  if (userID) query_params["userID"] = userID;
+
+  const tag = await tagModel.find(query_params);
 
   if (tag.length === 0)
     return res.status(StatusCodes.OK).json({
@@ -44,10 +49,10 @@ const getTag = async (req, res) => {
       data: "No tag found",
     });
 
-  if (tagID)
+  if (_id)
     res.status(StatusCodes.OK).json({
       status: StatusCodes.OK,
-      data: tag[0]
+      data: tag[0],
     });
   else
     res.status(StatusCodes.OK).json({
@@ -55,9 +60,8 @@ const getTag = async (req, res) => {
       data: {
         count: tag.length,
         tag: tag,
-      }
+      },
     });
-
 };
 
 //Update tag
@@ -65,21 +69,26 @@ const updateTag = async (req, res) => {
   const { name, color } = req.body;
   const { tagID } = req.params;
 
-  if (!tagID) throw new APIError("tagID required", StatusCodes.NOT_FOUND)
-  const tag = await tagModel.findById({ _id: tagID })
-  if (!tag) throw new APIError("tag not found", StatusCodes.NOT_FOUND)
+  if (!tagID) throw new APIError("tagID required", StatusCodes.NOT_FOUND);
+  const tag = await tagModel.findById({ _id: tagID });
+  if (!tag) throw new APIError("tag not found", StatusCodes.NOT_FOUND);
 
-
-  await tagModel.findByIdAndUpdate(
-    { _id: tagID },
-    {
-      name: name,
-      color: color,
-    }).catch(err => {
+  await tagModel
+    .findByIdAndUpdate(
+      { _id: tagID },
+      {
+        name: name,
+        color: color,
+      }
+    )
+    .catch((err) => {
       if (err.code === 11000)
-        throw new APIError(`Duplication error:  ${JSON.stringify(err.keyValue)}`, err.code)
-      throw new APIError(err.message, err.code)
-    })
+        throw new APIError(
+          `Duplication error:  ${JSON.stringify(err.keyValue)}`,
+          err.code
+        );
+      throw new APIError(err.message, err.code);
+    });
 
   return res.status(StatusCodes.OK).json({
     status: StatusCodes.OK,
@@ -91,11 +100,11 @@ const updateTag = async (req, res) => {
 const deleteTag = async (req, res) => {
   const { tagID } = req.params;
 
-  if (!tagID) throw new APIError("tagID required", StatusCodes.NOT_FOUND)
-  const tag = await tagModel.findById({ _id: tagID })
-  if (!tag) throw new APIError("tag not found", StatusCodes.NOT_FOUND)
+  if (!tagID) throw new APIError("tagID required", StatusCodes.NOT_FOUND);
+  const tag = await tagModel.findById({ _id: tagID });
+  if (!tag) throw new APIError("tag not found", StatusCodes.NOT_FOUND);
 
-  await tagModel.deleteOne({ _id: tagID })
+  await tagModel.deleteOne({ _id: tagID });
 
   return res.status(StatusCodes.OK).json({
     status: StatusCodes.OK,
