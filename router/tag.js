@@ -6,15 +6,6 @@ router
   .post(createTag)
   .get(getTag)
 
-// router
-//   .route("/g/:userID")
-//   .get(getTag);
-
-  
-// router
-//   .route("/g/:userID/:tagID")
-//   .get(getTag);
-
 router
   .route("/:tagID")
   .patch(updateTag)

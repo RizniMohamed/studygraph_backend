@@ -2,9 +2,10 @@ const tagModel = require("../model/tag")
 const timesheetModel = require("../model/timesheet")
 const { formatAMPM, time_diff, dateFormat, convertToJSDate } = require("./dt")
 
-const getAllTS = async (start_date = undefined, end_date = undefined) => {
+const getAllTS = async (args) => {
+    const {start_date, end_date, query_params} = args
 
-    const timesheet = await timesheetModel.find()
+    const timesheet = await timesheetModel.find(query_params)
 
     const allDates = []
     const allTags = []

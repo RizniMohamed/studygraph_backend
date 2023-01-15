@@ -5,10 +5,9 @@ router
   .route("/")
   .get(getTimesheet)
   .post(createTimesheet)
-
-router
+  
+  router
   .route("/:timesheetID")
-  .get(getTimesheet)
   .patch(updateTimesheet)
   .delete(deleteTimesheet)
 

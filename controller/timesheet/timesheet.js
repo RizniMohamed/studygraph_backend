@@ -44,16 +44,23 @@ const createTimesheet = async (req, res) => {
 const getTimesheet = async (req, res) => {
   const { timesheetID } = req.params;
 
-  if (timesheetID) {
-    const timesheet = await timesheetModel.find({ _id: timesheetID })
-    const tag = await tagModel.findById({ _id: timesheet[0].tagID })
-    res.status(StatusCodes.OK).json({
-      status: StatusCodes.OK,
-      data: { ts: timesheet[0], tag: tag }
-    });
-  }
+  const { tsID : _id, userID } = req.query;
 
-  const { ts, allDates, allTags } = await getAllTS()
+  const query_params = {}
+  if (_id) query_params["_id"] = _id
+  if (userID) query_params["userID"] = userID;
+
+
+  // if (timesheetID) {
+  //   const timesheet = await timesheetModel.find({ _id: timesheetID })
+  //   const tag = await tagModel.findById({ _id: timesheet[0].tagID })
+  //   res.status(StatusCodes.OK).json({
+  //     status: StatusCodes.OK,
+  //     data: { ts: timesheet[0], tag: tag }
+  //   });
+  // }
+
+  const { ts, allDates, allTags } = await getAllTS({query_params})
 
   if (ts.length === 0)
     return res.status(StatusCodes.OK).json({
@@ -66,8 +73,8 @@ const getTimesheet = async (req, res) => {
     data: {
       count: ts.length,
       timesheet: ts,
-      tag: allTags,
-      date: allDates
+      // tag: allTags,
+      // date: allDates
     }
   });
 
